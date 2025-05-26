@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch("obtener-permanencia.php")
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector("#tabla-empleados-permanencia");
+                    tbody.innerHTML = ""; 
+
+                    data.forEach(empleado => {
+                        const row = document.createElement("tr");
+
+                        row.innerHTML = `
+                            <td>${empleado.id}</td>
+                            <td>${empleado.nombre}</td>
+                            <td>${empleado.fecha_ingreso}</td>
+                            <td>${empleado.fecha_retiro}</td>
+                            <td>${empleado.permanencia_años}</td>
+                            <td>${empleado.permanencia_meses}</td>
+                            <td>${empleado.permanencia_dias}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error("Error cargando empleados:", error));
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const filterName = document.getElementById("filterName");
+            const filterId = document.getElementById("filterId");
+            const table = document.getElementById("dataTable");
+            const tbody = table.querySelector("tbody");
+
+            function filterTable() {
+                const nameValue = filterName.value.toLowerCase().trim();
+                const idValue = filterId.value.toLowerCase().trim();
+                const rows = tbody.querySelectorAll("tr");
+                let hasVisibleRow = false;
+
+                rows.forEach(row => {
+                    const idText = row.cells[0].textContent.toLowerCase(); // Columna 2: No. Identificación
+                    const nameText = row.cells[1].textContent.toLowerCase(); // Columna 3: Nombre
+
+                    const matchesName = nameValue === "" || nameText.includes(nameValue);
+                    const matchesId = idValue === "" || idText.includes(idValue);
+
+                    if (matchesName && matchesId) {
+                        row.style.display = "";
+                        hasVisibleRow = true;
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+
+                // Elimina mensaje previo si existe
+                const noResultsRow = document.getElementById("noResults");
+                if (noResultsRow) {
+                    noResultsRow.remove();
+                }
+
+                // Si no hay filas visibles, agregar mensaje
+                if (!hasVisibleRow) {
+                    const noResultsRow = document.createElement("tr");
+                    noResultsRow.id = "noResults";
+                    noResultsRow.innerHTML = `<td colspan="11" class="no-results">No hay coincidencias</td>`;
+                    tbody.appendChild(noResultsRow);
+                }
+            }
+
+            filterName.addEventListener("input", filterTable);
+            filterId.addEventListener("input", filterTable);
+        });
+    </script>
+    <style>
+        /* Modern & Elegant Styles */
+        :root {
+            --primary-color: #3a6ea5;
+            --secondary-color: #004e98;
+            --background-color: #f6f8fa;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-secondary: #707070;
+            --border-color: #e0e3e7;
+            --hover-color: #ebf2f8;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --radius: 10px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 40px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--card-bg);
+            padding: 0 24px;
+            height: 70px;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            letter-spacing: -0.5px;
+        }
+
+        .icon-right, .icon-left {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--hover-color);
+            transition: var(--transition);
+        }
+
+        .icon-right:hover, .icon-left:hover {
+            background-color: var(--border-color);
+        }
+
+        .icon-right img, .icon-left img {
+            width: 22px;
+            height: 22px;
+        }
+
+        /* Filters Section */
+        .filters {
+            background-color: var(--card-bg);
+            margin: 20px;
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .filters label {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filters input {
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .filters input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(58, 110, 165, 0.15);
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: var(--radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Table Container */
+        .table-container {
+            margin: 20px;
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: auto;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: auto;
+        }
+
+        thead {
+            position: sticky;
+            top: 0;
+            background-color: var(--card-bg);
+        }
+
+        th {
+            padding: 16px 20px;
+            text-align: left;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        tbody tr {
+            transition: var(--transition);
+        }
+
+        tbody tr:hover {
+            background-color: var(--hover-color);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filters a {
+                width: 100%;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .table-container {
+                padding: 10px;
+                margin: 10px;
+            }
+            
+            th, td {
+                padding: 12px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Permanencia de Empleados</h1>
+        <a href="" class="icon-right">
+            <img src="icons/sign-out.png" alt="Salir">
+        </a>
+    </div>
+
+    <div class="filters">
+        <a href="index.html">
+            <button class="btn">
+                <i class="fas fa-list"></i> Vista empleados general
+            </button>
+        </a>
+        <label>
+            Filtrar por nombre
+            <input type="text" id="filterName" placeholder="Escriba un nombre...">
+        </label>
+        <label>
+            Filtrar por ID
+            <input type="text" id="filterId" placeholder="Escriba un ID...">
+        </label>
+        <a href="vista_antiguedad_empleados.html">
+            <button class="btn">
+                <i class="fas fa-user-clock"></i> Vista antiguedad empleados
+            </button>
+        </a>                
+        <a href="vista_estadisticas.html">
+            <button class="btn">
+                <i class="fas fa-chart-bar"></i> Estadísticas
+            </button>
+        </a>
+    </div>
+
+    <div class="table-container">
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Fecha de ingreso</th>
+                    <th>Fecha de retiro</th>
+                    <th>Años</th>
+                    <th>Meses</th>
+                    <th>Días</th>
+                </tr>
+            </thead>
+            <tbody id="tabla-empleados-permanencia">
+                <!-- Data will be populated by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

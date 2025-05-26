@@ -1,0 +1,27 @@
+Array
+(
+    [id] => 370
+)
+
+Array
+(
+    [id] => 371
+)
+
+Array
+(
+    [id] => 372
+)
+
+CAMPOS PARA SELECCIONAR:
+
+Área - GH
+Centro de Costo - GH
+Macroproceso:
+Género
+Nivel Academico
+
+EPS:
+RH:
+Código CECO
+

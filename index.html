@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Empleados</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Estilos Generales */
+        :root {
+            --primary-color: #879683;
+            --secondary-color: #f9f3e5;
+            --text-color: #333;
+            --accent-color: #6c757d;
+            --danger-color: #dc3545;
+            --success-color: #198754;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f3e5;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: white;
+            padding: 0.8rem 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .icon-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .icon-btn:hover {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+        }
+        
+        .icon-btn i {
+            font-size: 1.2rem;
+        }
+        
+        /* Filtros y Botones */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1rem;
+            background-color: white;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--box-shadow);
+        }
+
+        footer p {
+            margin: 1rem 1rem;
+            align-items: center;
+            text-align: center;
+        }
+
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .input-group label {
+            font-size: 0.85rem;
+            margin-bottom: 0.3rem;
+            color: var(--accent-color);
+        }
+        
+        .input-group input {
+            padding: 0.6rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(74, 108, 247, 0.2);
+        }
+        
+        .btn {
+            padding: 0.6rem 1.2rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn:hover {
+            background-color: #f9f3e5;
+            transform: translateY(-2px);
+            color: #000;
+        }
+        
+        .btn i {
+            font-size: 1rem;
+        }
+        
+        /* Tabla */
+        .table-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin: 0 1.5rem 1.5rem;
+            overflow: hidden;
+        }
+        
+        .table-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            color: var(--accent-color);
+            font-weight: 600;
+            text-align: left;
+            padding: 1rem;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* Botones de acción */
+        .action-btn {
+            padding: 0.4rem 0.8rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .action-btn:hover {
+            background-color: #f9f3e5;
+            color: black;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .btn-group {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                margin-top: 1rem;
+            }
+            
+            .table-container {
+                margin: 1rem;
+                overflow-x: auto;
+            }
+        }
+        
+        /* Estado */
+        .badge {
+            padding: 0.3rem 0.6rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .badge-success {
+            background-color: rgba(25, 135, 84, 0.1);
+            color: var(--success-color);
+        }
+        
+        .badge-danger {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+        }
+        
+        /* Paginación */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .pagination-btn {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            background-color: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .pagination-btn:hover,
+        .pagination-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .header div{
+            display: flex;
+            align-items: center;
+        }
+
+        .header div img {
+            margin: 0 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="formulario_dinamico.php" class="icon-btn">
+            <i class="fas fa-user"></i>
+        </a>
+        <div>
+            <img id="logo" src="FDS_Logo2.webp" alt="Logo FDS" width="100rem" >
+            <h1>Gestion de empleados</h1>
+        </div>
+        <a href="" class="icon-btn">
+            <i class="fas fa-sign-out-alt"></i>
+        </a>
+    </div>
+
+    <div class="filters">
+        <div class="input-group">
+            <label for="filterName">Nombre</label>
+            <input type="text" id="filterName" placeholder="Buscar por nombre">
+        </div>
+        <div class="input-group">
+            <label for="filterId">Cédula</label>
+            <input type="text" id="filterId" placeholder="Buscar por cédula">
+        </div>
+        <div class="input-group">
+            <label for="filterName">Centro de Costo</label>
+            <input type="text" id="filterCeco" placeholder="Buscar por Ceco">
+        </div>
+        <div class="btn-group">
+            <a href="vista_antiguedad_empleados.html" class="btn">
+                <i class="fas fa-calendar-alt"></i>
+                Antigüedad
+            </a>
+            <a href="vista_permanencia_empleados.html" class="btn">
+                <i class="fas fa-chart-line"></i>
+                Permanencia
+            </a>
+            <a href="vista_estadisticas.html" class="btn">
+                <i class="fas fa-chart-bar"></i>
+                Estadísticas
+            </a>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="table-header">
+            <span>Listado de Empleados</span>
+            <div class="entries">
+                <select id="entries">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+            </div>
+        </div>
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>No. Identificación</th>
+                    <th>Nombre</th>
+                    <th>Cargo</th>
+                    <th>CECO</th>
+                    <th>Celular</th>
+                    <th>Dirección</th>
+                    <th>Fecha de ingreso</th>
+                    <th>Estado</th>
+                    <th>Nivel Académico</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tabla-empleados-general">
+                <!-- Datos dinámicos -->
+            </tbody>
+        </table>
+        <div class="pagination">
+            <button class="pagination-btn"><i class="fas fa-chevron-left"></i></button>
+            <button class="pagination-btn active">1</button>
+            <button class="pagination-btn">2</button>
+            <button class="pagination-btn">3</button>
+            <button class="pagination-btn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </div>
+    <footer>
+        <p>© 2025 Tecnologia FDS. All rights reserved.</p>
+    </footer>
+
+    <script>
+    function verificarEmpleado(id) {
+            fetch('verificar_empleado.php?id=' + id)
+            .then(response => response.json())
+            .then(data => {
+                if (data.existe) {
+                    // Si existe, ir a editar-empleado.php
+                    window.location.href = `editar-empleado.php?id=${id}`;
+                } else {
+                    // Si no existe, ir a ver_empleado.php
+                    window.location.href = `ver_empleado.php?id=${id}`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // En caso de error, redirigir a ver_empleado.php por defecto
+                window.location.href = `ver_empleado.php?id=${id}`;
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+    // Variables globales
+    let empleadosData = [];
+    let currentPage = 1;
+    let entriesPerPage = 10;
+    
+    // Cargar datos de empleados
+    fetch("obtener-empleados.php")
+        .then(response => response.json())
+        .then(data => {
+            empleadosData = data;
+            renderTable();
+            updatePagination();
+        })
+        .catch(error => console.error("Error cargando empleados:", error));
+    
+    // Configurar selector de entradas por página
+    const entriesSelect = document.getElementById("entries");
+    entriesSelect.addEventListener("change", function() {
+        entriesPerPage = parseInt(this.value);
+        currentPage = 1; // Reset to first page when changing entries per page
+        renderTable();
+        updatePagination();
+    });
+    
+    // Configurar botones de paginación
+    const pagination = document.querySelector(".pagination");
+    pagination.addEventListener("click", function(e) {
+        if (e.target.classList.contains("pagination-btn") || 
+            e.target.parentElement.classList.contains("pagination-btn")) {
+            
+            const button = e.target.classList.contains("pagination-btn") ? 
+                e.target : e.target.parentElement;
+                
+            // Previous page button
+            if (button.querySelector(".fa-chevron-left") && currentPage > 1) {
+                currentPage--;
+                renderTable();
+                updatePagination();
+            }
+            // Next page button
+            else if (button.querySelector(".fa-chevron-right") && 
+                currentPage < Math.ceil(empleadosData.length / entriesPerPage)) {
+                currentPage++;
+                renderTable();
+                updatePagination();
+            }
+            // Numbered page button
+            else if (!button.querySelector(".fa-chevron-left") && 
+                    !button.querySelector(".fa-chevron-right")) {
+                const pageNum = parseInt(button.textContent);
+                if (!isNaN(pageNum)) {
+                    currentPage = pageNum;
+                    renderTable();
+                    updatePagination();
+                }
+            }
+        }
+    });
+        
+    // Función para renderizar la tabla con los datos filtrados y paginados
+    function renderTable() {
+        const tbody = document.querySelector("#tabla-empleados-general");
+        tbody.innerHTML = ""; 
+        
+        // Aplicar filtros actuales
+        const nameFilter = document.getElementById("filterName").value.toLowerCase().trim();
+        const idFilter = document.getElementById("filterId").value.toLowerCase().trim();
+        const cecoFilter = document.getElementById("filterCeco").value.toLowerCase().trim();
+        
+        // Filtrar los datos
+        const filteredData = empleadosData.filter(empleado => {
+        const matchesName = nameFilter === "" || 
+            empleado.nombre.toLowerCase().includes(nameFilter);
+        const matchesId = idFilter === "" || 
+            empleado.no_identificacion.toLowerCase().includes(idFilter);
+        const matchesCeco = cecoFilter === "" || 
+            empleado.ceco.toLowerCase().includes(cecoFilter);
+        return matchesName && matchesId && matchesCeco;
+    });
+        
+        // Calcular índices para la paginación
+        const startIndex = (currentPage - 1) * entriesPerPage;
+        const endIndex = Math.min(startIndex + entriesPerPage, filteredData.length);
+        
+        // Verificar si hay datos para mostrar
+        if (filteredData.length === 0) {
+            const noResultsRow = document.createElement("tr");
+            noResultsRow.id = "noResults";
+            noResultsRow.innerHTML = `<td colspan="11" style="text-align: center;">No se encontraron coincidencias</td>`;
+            tbody.appendChild(noResultsRow);
+            return;
+        }
+        
+        // Generar filas para la página actual
+        for (let i = startIndex; i < endIndex; i++) {
+            const empleado = filteredData[i];
+            const row = document.createElement("tr");
+            
+            // Determinar el estado para aplicar el estilo correspondiente
+            const estadoClass = empleado.estado === "Activo" ? "badge-success" : "badge-danger";
+
+            row.innerHTML = `
+                <td>${empleado.id}</td>
+                <td>${empleado.no_identificacion}</td>
+                <td>${empleado.nombre}</td>
+                <td>${empleado.cargo}</td>
+                <td>${empleado.ceco}</td>
+                <td>${empleado.cel}</td>
+                <td>${empleado.direccion}</td>
+                <td>${empleado.fecha_ingreso}</td>
+                <td><span class="badge ${estadoClass}">${empleado.estado}</span></td>
+                <td>${empleado.nivel_academico}</td>
+                <td>
+                    <button class="action-btn" onclick="verificarEmpleado(${empleado.id})">
+                        <i class="fas ${empleado.estado === 'Activo' ? 'fa-edit' : 'fa-eye'}"></i> 
+                        ${empleado.estado === 'Activo' ? 'Editar' : 'Ver'}
+                    </button>
+                    ${empleado.estado === 'Activo' ? `
+                    <a href="retirar-empleado.php?id=${empleado.id}">
+                        <button class="action-btn">
+                            <i class="fas fa-user-minus"></i> Retirar
+                        </button>
+                    </a>
+                    ` : ''}
+                </td>
+            `;
+            tbody.appendChild(row);
+        };
+    };
+    
+    // Función para actualizar los botones de paginación
+    function updatePagination() {
+        const pagination = document.querySelector(".pagination");
+        pagination.innerHTML = "";
+        
+        // Aplicar filtros actuales para calcular total de páginas
+        const nameFilter = document.getElementById("filterName").value.toLowerCase().trim();
+        const idFilter = document.getElementById("filterId").value.toLowerCase().trim();
+        const cecoFilter = document.getElementById("filterCeco").value.toLowerCase().trim();
+        
+        // Filtrar los datos
+        const filteredData = empleadosData.filter(empleado => {
+        const matchesName = nameFilter === "" || 
+            empleado.nombre.toLowerCase().includes(nameFilter);
+        const matchesId = idFilter === "" || 
+            empleado.no_identificacion.toLowerCase().includes(idFilter);
+        const matchesCeco = cecoFilter === "" || 
+            empleado.ceco.toLowerCase().includes(cecoFilter);
+        return matchesName && matchesId && matchesCeco;
+    });
+        
+        const totalPages = Math.ceil(filteredData.length / entriesPerPage);
+        
+        // Botón anterior
+        const prevBtn = document.createElement("button");
+        prevBtn.className = "pagination-btn";
+        prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        prevBtn.disabled = currentPage === 1;
+        pagination.appendChild(prevBtn);
+        
+        // Determinar qué páginas mostrar
+        let startPage = Math.max(1, currentPage - 1);
+        let endPage = Math.min(totalPages, startPage + 2);
+        
+        // Ajustar si estamos cerca del final
+        if (endPage - startPage < 2) {
+            startPage = Math.max(1, endPage - 2);
+        }
+        
+        // Botones de página
+        for (let i = startPage; i <= endPage; i++) {
+            const pageBtn = document.createElement("button");
+            pageBtn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
+            pageBtn.textContent = i;
+            pagination.appendChild(pageBtn);
+        }
+        
+        // Botón siguiente
+        const nextBtn = document.createElement("button");
+        nextBtn.className = "pagination-btn";
+        nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        nextBtn.disabled = currentPage === totalPages;
+        pagination.appendChild(nextBtn);
+    }
+    
+    // Agregar event listeners para filtros
+    document.getElementById("filterName").addEventListener("input", function() {
+        currentPage = 1; // Reset to first page when filtering
+        renderTable();
+        updatePagination();
+    });
+    
+    document.getElementById("filterId").addEventListener("input", function() {
+        currentPage = 1; // Reset to first page when filtering
+        renderTable();
+        updatePagination();
+    });
+
+    document.getElementById("filterCeco").addEventListener("input", function() {
+        currentPage = 1; // Reset to first page when filtering
+        renderTable();
+        updatePagination();
+    });
+});
+    </script>
+</body>
+</html>
